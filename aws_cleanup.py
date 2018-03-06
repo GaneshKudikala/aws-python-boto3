@@ -75,13 +75,12 @@ def dns_check(dns):
 def create_ami(instance):
     try:
         image = instance.create_image(
-            instanceId=instance.instance_id,
+            InstanceId=instance.instance_id,
             Name=instance.instance_id + '-' + datetime.now().strftime('%H%m%S%d%M%Y')
         )
-        image,wait_until_exists()
-        image_tag = {'Key': 'Created At',
-                     'Value': 'For instance with id ' + instance.instance_id + ' at ' + datetime.now().strftime(
-                         '%H:%m:%S %d/%M/%Y')}
+        image.wait_until_exists()
+        image_tag = {'Key': 'opsworks',
+                     'Value': 'done by Mikhail Kurtagin at ' + datetime.now().strftime('%H:%m:%S %d/%M/%Y')}
         image.create_tags(
             Tags=[
                 image_tag
