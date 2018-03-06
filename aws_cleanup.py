@@ -67,7 +67,7 @@ def dns_check(dns):
         else:
             return 'http check failed'
     except urllib2.URLError:
-        return 'connection error'
+        return 'http check error'
     else:
         return 'passed'
 
