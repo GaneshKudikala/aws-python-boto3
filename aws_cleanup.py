@@ -11,7 +11,7 @@ def image_cleanup(timedelta_=timedelta(days=365)):
     boto3conn = boto3.resource("ec2", region_name="eu-west-1")
     query_result = list(boto3conn.images.filter(Owners=['self']))
     for image in query_result:
-        cd = datetime.strptime(image.creation_date, '%Y-%m-%dT%H:%M:%S.000Z')
+        icd = datetime.strptime(image.creation_date, '%Y-%m-%dT%H:%M:%S.000Z')
         if datetime.now() - icd > timedelta_:
             try:
                 image.deregister()
@@ -25,7 +25,7 @@ def resolve_ip(host):
 def determine_instance(ip, host):
     instances = []
     filters = [{'Name': 'ip-address', 'Values': [ip]}]
-    do_query = list(ec2.instances,filter(Filters=filters).limit(1))
+    do_query = list(ec2.instances.filter(Filters=filters).limit(1))
 
     if not do_query:
         instances.append({
@@ -61,18 +61,18 @@ def dns_check(dns):
     try:
         request = urllib2.Request('http://' + dns)
         urllib2.urlopen(request)
-    except urllib.HTTPError as e:
+    except urllib2.HTTPError as e:
         if e.code !=500:
             return 'passed'
         else:
             return 'http check failed'
-    except urrlib2.URLError:
+    except urllib2.URLError:
         return 'connection error'
     else:
         return 'passed'
 
 
-def create_ami
+def create_ami(instance):
     try:
         image = instance.create_image(
             instanceId=instance.instance_id,
