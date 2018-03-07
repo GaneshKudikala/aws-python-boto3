@@ -8,8 +8,10 @@ from botocore.exceptions import ClientError
 ec2 = boto3.resource('ec2')
 
 def image_cleanup(timedelta_=timedelta(days=365)):
-    boto3conn = boto3.resource("ec2", region_name="eu-west-1")
-    query_result = list(boto3conn.images.filter(Owners=['self']))
+    ses = boto3.session.Session()
+    reg = ses.region_name
+    imgres = boto3.resource("ec2", region_name=reg)
+    query_result = list(imgres.images.filter(Owners=['self']))
     for image in query_result:
         icd = datetime.strptime(image.creation_date, '%Y-%m-%dT%H:%M:%S.000Z')
         if datetime.now() - icd > timedelta_:
